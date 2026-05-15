@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TV02 - Manufatura Avançada</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 0, 80, 0.15), transparent 30%),
+                radial-gradient(circle at 80% 60%, rgba(255, 80, 0, 0.12), transparent 35%),
+                #09090c;
+            color: #fff;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        .noise {
+            position: absolute;
+            inset: 0;
+            opacity: 0.03;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        /* HEADER */
+
+        .header {
+            position: absolute;
+            top: 40px;
+            left: 60px;
+            z-index: 20;
+        }
+
+        .header span {
+            color: #ff4d6d;
+            font-size: 13px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .header h1 {
+            margin-top: 12px;
+            font-size: 52px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            margin-top: 14px;
+            max-width: 650px;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* CAROUSEL */
+
+        .carousel-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1800px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel {
+            position: relative;
+            width: 1000px;
+            height: 620px;
+            transform-style: preserve-3d;
+            transition: transform 1s ease;
+        }
+
+        .card {
+            position: absolute;
+            width: 360px;
+            height: 480px;
+            left: 50%;
+            top: 50%;
+            transform-style: preserve-3d;
+            transform-origin: center center;
+            margin-left: -180px;
+            margin-top: -240px;
+
+            background: rgba(110, 110, 110, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+
+            backdrop-filter: blur(2px);
+
+            padding: 28px;
+
+            transition:
+                transform 1s ease,
+                opacity 1s ease,
+                filter 1s ease;
+
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg,
+                    rgba(255, 255, 255, 0.08),
+                    transparent 40%);
+            pointer-events: none;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .mega-tag {
+            color: #ff5a76;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 28px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: rgba(255, 255, 255, 0.72);
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: auto;
+        }
+
+        .card-footer {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .select-btn {
+            border: none;
+            background: #ff4d6d;
+            color: #fff;
+            padding: 14px 22px;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 77, 109, 0.35);
+        }
+
+        .details {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* MODAL */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.4s;
+
+            z-index: 999;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            width: 800px;
+            background: rgba(20, 20, 24, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .modal h2 {
+            font-size: 34px;
+            margin-bottom: 20px;
+        }
+
+        .modal p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+            margin-bottom: 28px;
+        }
+
+        .reference {
+            padding: 20px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 16px;
+        }
+
+        .reference h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .reference a {
+            color: #ff5a76;
+            text-decoration: none;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            cursor: pointer;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise"></div>
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <span>Vertical Estratégica</span>
+
+        <h1>MANUFATURA AVANÇADA</h1>
+
+        <p>
+            Explore forças tecnológicas relacionadas às megatendências selecionadas.
+            Escolha uma força de cada megatendência para construir o cenário estratégico da empresa.
+        </p>
+
+    </div>
+
+    <!-- CAROUSEL -->
+
+    <div class="carousel-wrapper">
+
+        <div class="carousel" id="carousel">
+
+            <!-- CARD 1 -->
+
+            <div class="card">
+
+                <div class="card-content">
+
+                    <div class="mega-tag">
+                        TRANSFORMAÇÃO DIGITAL
+                    </div>
+
+                    <h2>
+                        Gêmeos Digitais Industriais
+                    </h2>
+
+                    <p>
+                        Réplicas virtuais de fábricas e linhas produtivas permitem monitoramento,
+                        simulação e otimização operacional em tempo real.
+                    </p>
+
+                    <div class="card-footer">
+                        <button class="select-btn">
+                            Selecionar
+                        </button>
+
+                        <div class="details">
+                            toque para detalhes
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CARD 2 -->
+
+            <div class="card">
+
+                <div class="card-content">
+
+                    <div class="mega-tag">
+                        TRANSFORMAÇÃO DIGITAL
+                    </div>
+
+                    <h2>
+                        IA para Manutenção Preditiva
+                    </h2>
+
+                    <p>
+                        Sensores e inteligência artificial antecipam falhas e aumentam eficiência
+                        operacional em ambientes industriais complexos.
+                    </p>
+
+                    <div class="card-footer">
+                        <button class="select-btn">
+                            Selecionar
+                        </button>
+
+                        <div class="details">
+                            toque para detalhes
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CARD 3 -->
+
+            <div class="card">
+
+                <div class="card-content">
+
+                    <div class="mega-tag">
+                        TRANSIÇÃO ENERGÉTICA
+                    </div>
+
+                    <h2>
+                        Manufatura de Baixa Emissão
+                    </h2>
+
+                    <p>
+                        Processos industriais orientados à neutralidade de carbono e eficiência energética
+                        tornam-se vantagem competitiva global.
+                    </p>
+
+                    <div class="card-footer">
+                        <button class="select-btn">
+                            Selecionar
+                        </button>
+
+                        <div class="details">
+                            toque para detalhes
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CARD 4 -->
+
+            <div class="card">
+
+                <div class="card-content">
+
+                    <div class="mega-tag">
+                        TRANSIÇÃO ENERGÉTICA
+                    </div>
+
+                    <h2>
+                        Fábricas Energéticas Inteligentes
+                    </h2>
+
+                    <p>
+                        Integração de microgrids, sensores e automação para gestão energética distribuída
+                        em plantas industriais.
+                    </p>
+
+                    <div class="card-footer">
+                        <button class="select-btn">
+                            Selecionar
+                        </button>
+
+                        <div class="details">
+                            toque para detalhes
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL -->
+
+    <div class="modal" id="modal">
+
+        <div class="modal-content">
+
+            <button class="close" id="closeModal">
+                ✕
+            </button>
+
+            <h2 id="modalTitle">
+                Gêmeos Digitais Industriais
+            </h2>
+
+            <p id="modalDescription">
+                Réplicas digitais conectadas a sensores industriais para simulação,
+                monitoramento e otimização operacional em tempo real.
+            </p>
+
+            <div class="reference">
+
+                <h3>
+                    BMW Digital Factory
+                </h3>
+
+                <a href="https://www.bmwgroup.com" target="_blank">
+                    Acessar referência
+                </a>
+
+            </div>
+
+            <div class="reference">
+
+                <h3>
+                    Siemens Industrial Metaverse
+                </h3>
+
+                <a href="https://www.siemens.com" target="_blank">
+                    Acessar referência
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const carousel = document.getElementById('carousel');
+        const cards = document.querySelectorAll('.card');
+
+        let angle = 0;
+        const radius = 520;
+        let current = 0;
+
+        function updateCarousel() {
+
+            cards.forEach((card, index) => {
+
+                const offset = index - current;
+
+                const rotateY = offset * 90;
+
+                card.style.transform =
+                    `
+          rotateY(${rotateY}deg)
+          translateZ(${radius}px)
+          `;
+
+                const abs = Math.abs(offset);
+
+                if (abs === 0) {
+
+                    card.style.opacity = 1;
+                    card.style.filter = 'blur(0px)';
+                    card.style.zIndex = 10;
+
+                } else {
+
+                    card.style.opacity = 0.45;
+                    card.style.filter = 'blur(15px)';
+                    card.style.zIndex = 1;
+
+                }
+
+            });
+
+        }
+
+        updateCarousel();
+
+        /* AUTO MOVE */
+
+        setInterval(() => {
+
+            current++;
+
+            if (current >= cards.length) {
+                current = 0;
+            }
+
+            updateCarousel();
+
+        }, 7000);
+
+        /* TOUCH */
+
+        let startX = 0;
+
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        carousel.addEventListener('touchend', (e) => {
+
+            let endX = e.changedTouches[0].clientX;
+
+            if (startX - endX > 50) {
+
+                current++;
+
+                if (current >= cards.length) {
+                    current = 0;
+                }
+
+            } else if (endX - startX > 50) {
+
+                current--;
+
+                if (current < 0) {
+                    current = cards.length - 1;
+                }
+
+            }
+
+            updateCarousel();
+
+        });
+
+        /* DESKTOP DRAG */
+
+        let isDragging = false;
+        let dragStart = 0;
+
+        carousel.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            dragStart = e.clientX;
+        });
+
+        window.addEventListener('mouseup', (e) => {
+
+            if (!isDragging) return;
+
+            isDragging = false;
+
+            let diff = e.clientX - dragStart;
+
+            if (diff < -50) {
+
+                current++;
+
+                if (current >= cards.length) {
+                    current = 0;
+                }
+
+            } else if (diff > 50) {
+
+                current--;
+
+                if (current < 0) {
+                    current = cards.length - 1;
+                }
+
+            }
+
+            updateCarousel();
+
+        });
+
+        /* MODAL */
+
+        const modal = document.getElementById('modal');
+        const closeModal = document.getElementById('closeModal');
+
+        cards.forEach(card => {
+
+            card.addEventListener('click', () => {
+
+                modal.classList.add('active');
+
+            });
+
+        });
+
+        closeModal.addEventListener('click', () => {
+
+            modal.classList.remove('active');
+
+        });
+
+    </script>
+
+</body>
+
+</html>
